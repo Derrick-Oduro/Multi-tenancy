@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'tenant_id',
     ];
 
     /**
@@ -45,20 +47,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function isAdmin(): bool
-        {
-            return $this->role === 'admin';
-        }
-    public function isEditor(): bool
-        {
-            return $this->role === 'editor';
-        }
-    public function isAuthor(): bool
-        {
-            return $this->role === 'author';
-        }
-    public function isGuest(): bool
-        {
-            return $this->role === 'guest';
-        }
+
+    // Relationship with tenant
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * Override the team_id for Spatie permissions
+     * This maps our tenant_id to Spatie's team_id
+     */
+    public function getTeamIdAttribute()
+    {
+        return $this->tenant_id;
+    }
+
+    /**
+     * Set the team when assigning roles
+     */
+    public function setTeamId($teamId)
+    {
+        $this->tenant_id = $teamId;
+        return $this;
+    }
 }

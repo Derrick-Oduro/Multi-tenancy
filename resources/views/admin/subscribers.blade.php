@@ -8,6 +8,7 @@
 
     {{-- Main Content Area --}}
     <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
+        @can('view subscribers')
         <h1 class="text-2xl font-bold mb-4">Subscribers</h1>
 
         <table class="min-w-full bg-white rounded-lg">
@@ -26,7 +27,7 @@
                     <td class="py-1 px-3 border-b text-sm text-center">{{ $subscriber->email }}</td>
                     <td class="py-1 px-3 border-b">
                         <div class="flex justify-end space-x-2">
-                            @can('admin.access')
+                            @can('delete subscribers')
                             <form action="{{ route('subscribers.destroy', $subscriber->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -38,14 +39,16 @@
                                 </button>
                             </form>
                             @endcan
-
                         </div>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-
+        @else
+        <h1 class="text-2xl font-bold mb-4">Access Denied</h1>
+        <p>You do not have permission to access this page.</p>
+        @endcan
     </main>
 </div>
 @endsection

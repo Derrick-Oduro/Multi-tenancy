@@ -16,6 +16,20 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- Tenant/Organization -->
+        <div class="mt-4">
+            <x-input-label for="tenant_id" :value="__('Organization')" />
+            <select id="tenant_id" name="tenant_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                <option value="">{{ __('Select Organization') }}</option>
+                @foreach($tenants as $tenant)
+                    <option value="{{ $tenant->id }}" {{ old('tenant_id') == $tenant->id ? 'selected' : '' }}>
+                        {{ $tenant->name }}
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('tenant_id')" class="mt-2" />
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />

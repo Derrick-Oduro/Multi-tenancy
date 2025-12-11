@@ -8,7 +8,7 @@
     <x-sidebar></x-sidebar>
 
     {{-- Main Content Area --}}
-    @can('admin.access')
+    @can('manage roles')
     <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Roles Management</h1>
 
@@ -32,21 +32,21 @@
                         <td class="py-1 px-3 border-b text-sm text-center">{{ $user->email }}</td>
                         <td class="py-1 px-3 border-b text-sm text-center">
                             <span class="px-2 py-1 rounded text-xs font-semibold
-                                @if($user->role === 'admin') bg-red-100 text-red-800
-                                @elseif($user->role === 'editor') bg-blue-100 text-blue-800
-                                @elseif($user->role === 'author') bg-green-100 text-green-800
+                                @if($user->hasRole('admin')) bg-red-100 text-red-800
+                                @elseif($user->hasRole('editor')) bg-blue-100 text-blue-800
+                                @elseif($user->hasRole('author')) bg-green-100 text-green-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
-                                {{ ucfirst($user->role) }}
+                                {{ ucfirst($user->roles->first()->name ?? 'guest') }}
                             </span>
                         </td>
                         <td class="py-1 px-3 border-b text-sm">
                             <div class="flex justify-end">
                                 <select name="roles[{{ $user->id }}]" class="border rounded px-2 py-1 text-sm">
-                                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                    <option value="editor" {{ $user->role == 'editor' ? 'selected' : '' }}>Editor</option>
-                                    <option value="author" {{ $user->role == 'author' ? 'selected' : '' }}>Author</option>
-                                    <option value="guest" {{ $user->role == 'guest' ? 'selected' : '' }}>Guest</option>
+                                    <option value="admin" {{ $user->hasRole('admin') ? 'selected' : '' }}>Admin</option>
+                                    <option value="editor" {{ $user->hasRole('editor') ? 'selected' : '' }}>Editor</option>
+                                    <option value="author" {{ $user->hasRole('author') ? 'selected' : '' }}>Author</option>
+                                    <option value="guest" {{ $user->hasRole('guest') ? 'selected' : '' }}>Guest</option>
                                 </select>
                             </div>
                         </td>

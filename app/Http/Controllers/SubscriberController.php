@@ -12,8 +12,14 @@ class SubscriberController extends Controller
      */
     public function index()
     {
-        $subscribers = Subscriber::all();
-        return view('admin.subscribers', ['subscribers' => $subscribers]);
+        // Check permission
+        if (!auth()->user()->can('view subscribers')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Subscribers are automatically filtered by tenant
+        $subscribers = Subscriber::latest()->paginate(10);
+        return view('admin.subscribers', compact('subscribers'));
     }
 
     /**
@@ -29,15 +35,16 @@ class SubscriberController extends Controller
      */
     public function store(Request $request)
     {
-     $request->validate([
+        $request->validate([
             'email' => 'required|email|unique:subscribers,email',
         ]);
 
+        // tenant_id is automatically set via model boot
         Subscriber::create([
-            'email' => $request->input('email'),
+            'email' => $request->email,
         ]);
 
-        return redirect()->route('posts.index')->with('success', 'Subscription successful.');
+        return back()->with('success', 'Successfully subscribed to our newsletter!');
     }
 
     /**
@@ -77,7 +84,14 @@ class SubscriberController extends Controller
      */
     public function destroy(Subscriber $subscriber)
     {
+        // Check permission
+        if (!auth()->user()->can('delete subscribers')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $subscriber->delete();
-        return redirect()->route('subscribers.index')->with('success', 'Subscriber deleted successfully.');
+
+        return redirect()->route('subscribers.index')
+            ->with('success', 'Subscriber deleted successfully!');
     }
 }

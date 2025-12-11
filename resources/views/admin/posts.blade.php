@@ -5,21 +5,16 @@
 
     {{-- Sidebar --}}
     <x-sidebar></x-sidebar>
+    @can('view posts')
     <main class="w-4/5 p-6 bg-gray-100 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Posts</h1>
         <div class="mb-4">
-            @can('create.post')
+            @can('create posts')
             <label for="createPostModal"
                class="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-700 float-right">
                +Add Post
             </label>
-            {{-- <label for="createPostModal"
-                class="rounded-md bg-slate-800 py-2 px-4 text-white cursor-pointer ml-2">
-                + Add Post
-            </label> --}}
             <x-modal.createPostModal :categories="\App\Models\Category::all()"></x-modal.createPostModal>
-            {{-- @include('components.modal.createPostModal', ['categories' => \App\Models\Category::all()]) --}}
-
             @endcan
         </div>
 
@@ -43,17 +38,14 @@
                     <td class="py-1 px-3 border-b text-xs text-center">{{ $post->created_at->format('M d, Y') }}</td>
                     <td class="py-1 px-3 border-b">
                         <div class="flex justify-end space-x-2">
-                            {{-- @foreach ($posts as $post)
-
-                            @endforeach --}}
-                            @can('edit.post', $post)
+                            @can('edit.own.post', $post)
                             <label for="editPostModal-{{ $post->id }}"
                                class="px-2 py-1 text-sm text-green-500 rounded hover:underline">
                                Edit
                             </label>
                             @endcan
 
-                            @can('delete.post', $post)
+                            @can('delete posts', $post)
                             <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -71,5 +63,12 @@
         </table>
 
     </main>
+    @else
+    <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
+        <h1 class="text-2xl font-bold mb-4">Access Denied</h1>
+        <p>You do not have permission to access this page.</p>
+    </main>
+    @endcan
 </div>
 @endsection
+

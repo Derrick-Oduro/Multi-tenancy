@@ -7,15 +7,16 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-
 class CategoryController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        // Categories are automatically filtered by tenant
         $categories = Category::all();
         return view('admin.categories', ['categories' => $categories]);
     }
@@ -25,7 +26,11 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $this->authorize('create.category', Category::class);
+        // Check permission using Spatie
+        if (!auth()->user()->can('create categories')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $categories = Category::all();
         return view('category.create', compact('categories'));
     }
@@ -35,19 +40,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create.category', Category::class);
+        // Check permission using Spatie
+        if (!auth()->user()->can('create categories')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug',
+            'slug' => 'required|string|max:255',
         ]);
 
+        // tenant_id is automatically set via model boot method
         Category::create([
             'name' => $request->input('name'),
             'slug' => $request->input('slug'),
         ]);
 
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
-
     }
 
     /**
@@ -56,17 +65,26 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category = Category::findOrFail($category->id);
+        // Posts are automatically filtered by tenant
         $posts = Post::orderBy('created_at', 'desc')->get();
         $secondLatest = $posts->skip(1)->first();
+
         return view('category-post', [
             'secondLatest' => $secondLatest,
-            'category' => $category]);}
+            'category' => $category
+        ]);
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Category $category)
     {
+        // Check permission using Spatie
+        if (!auth()->user()->can('edit categories')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('category.edit', compact('category'));
     }
 
@@ -75,11 +93,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $this->authorize('update.category', $category);
+        // Check permission using Spatie
+        if (!auth()->user()->can('edit categories')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'slug' => 'required|string|max:255',
         ]);
 
         $category->update([
@@ -88,7 +109,6 @@ class CategoryController extends Controller
         ]);
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
-
     }
 
     /**
@@ -96,7 +116,11 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $this->authorize('delete.category', $category);
+        // Check permission using Spatie
+        if (!auth()->user()->can('delete categories')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }

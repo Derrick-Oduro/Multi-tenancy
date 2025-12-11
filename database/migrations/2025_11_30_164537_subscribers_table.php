@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subscribers', function (Blueprint $table) {
-        $table->id();
-        $table->string('email')->unique();
-        $table->timestamps();
-});
+            $table->id();
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->string('email');
+            $table->timestamps();
 
+            // Email should be unique per tenant
+            $table->unique(['tenant_id', 'email']);
+        });
     }
 
     /**
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('subscribers');
     }
 };

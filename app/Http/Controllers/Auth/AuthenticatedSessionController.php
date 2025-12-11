@@ -28,6 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Set tenant in session
+        if (auth()->user()->tenant_id) {
+            session(['tenant_id' => auth()->user()->tenant_id]);
+        }
+
         return redirect()->intended(route('admin', absolute: false));
     }
 

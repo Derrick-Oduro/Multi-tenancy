@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Tags;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Str;
 
 class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    use AuthorizesRequests;
     public function index()
     {
-        $tags = Tags::all();
-        return view('admin.tags', ['tags' => $tags]);
+        // Tags are automatically filtered by tenant
+        $tags = Tags::withCount('posts')->latest()->paginate(10);
+        return view('admin.tags', compact('tags'));
     }
 
     /**
@@ -23,8 +23,12 @@ class TagController extends Controller
      */
     public function create()
     {
-        $tags = Tags::all();
-        return view('tag.create', compact('tags'));
+        // Check permission using Spatie
+        if (!auth()->user()->can('create tags')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('tag.create');
     }
 
     /**
@@ -32,64 +36,74 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create.tag', Tags::class);
+        // Check permission using Spatie
+        if (!auth()->user()->can('create tags')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
-            'name' => 'required|string|max:255|',
-            'slug' => 'required|string|max:255|unique:tags,slug',
+            'name' => 'required|string|max:255',
         ]);
 
+        // tenant_id is automatically set via model boot
         Tags::create([
-            'name' => $request->input('name'),
-            'slug' => $request->input('slug'),
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
         ]);
 
-        return redirect()->route('tags.index')->with('success', 'Tag created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Tags $tags)
-    {
-        //
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag created successfully!');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tags $tags)
+    public function edit(Tags $tag)
     {
-        $tags = Tags::findOrFail($tags->id);
-        return view('tag.edit', compact('tags'));
+        // Check permission using Spatie
+        if (!auth()->user()->can('edit tags')) {
+            abort(403, 'Unauthorized action.');
+        }
 
+        return view('tag.edit', compact('tag'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tags $tags)
+    public function update(Request $request, Tags $tag)
     {
-        $this->authorize('update.tag', $tags);
+        // Check permission using Spatie
+        if (!auth()->user()->can('edit tags')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
-            'name' => 'required|string|max:255|',
-            'slug' => 'required|string|max:255|unique:tags,slug,' . $tags->id,
-        ]);
-        $tags->update([
-            'name' => $request->input('name'),
-            'slug' => $request->input('slug'),
+            'name' => 'required|string|max:255',
         ]);
 
-        return redirect()->route('tags.index')->with('success', 'Tag updated successfully.');
+        $tag->update([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tags $tags)
+    public function destroy(Tags $tag)
     {
-        $this->authorize('delete.tag', $tags);
-        $tags->delete();
+        // Check permission using Spatie
+        if (!auth()->user()->can('delete tags')) {
+            abort(403, 'Unauthorized action.');
+        }
 
-        return redirect()->route('tags.index')->with('success', 'Tag deleted successfully.');
+        $tag->delete();
+
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag deleted successfully!');
     }
 }
