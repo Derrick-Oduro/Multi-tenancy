@@ -7,8 +7,9 @@
     <x-sidebar></x-sidebar>
 
     {{-- Main Content Area --}}
+    @can('view subscribers')
     <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
-        @can('view subscribers')
+
         <h1 class="text-2xl font-bold mb-4">Subscribers</h1>
 
         <table class="min-w-full bg-white rounded-lg">
@@ -45,10 +46,12 @@
                 @endforeach
             </tbody>
         </table>
-        @else
-        <h1 class="text-2xl font-bold mb-4">Access Denied</h1>
-        <p>You do not have permission to access this page.</p>
-        @endcan
     </main>
+     @else
+    <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
+        <h1 class="text-2xl font-bold mb-4">Access Denied</h1>
+        <p>You do not have permission to view this page.</p>
+    </main>
+    @endcan
 </div>
 @endsection

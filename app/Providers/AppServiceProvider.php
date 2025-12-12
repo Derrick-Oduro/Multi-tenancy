@@ -20,16 +20,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Spatie Permission handles most of this automatically
-        // But we can add custom gates for specific logic
+
 
         Gate::define('edit.own.post', function ($user, $post) {
-            // Admin and editor can edit any post
             if ($user->hasRole(['admin', 'editor'])) {
                 return true;
             }
 
-            // Author can only edit their own post
             if ($user->hasRole('author')) {
                 return $post->user_id === $user->id;
             }
@@ -38,12 +35,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('delete.own.post', function ($user, $post) {
-            // Admin can delete any post
             if ($user->hasRole('admin')) {
                 return true;
             }
 
-            // Author can only delete their own post
             if ($user->hasRole('author')) {
                 return $post->user_id === $user->id;
             }

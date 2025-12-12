@@ -132,7 +132,6 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        // Check if user can edit this specific post using custom Gate
         if (!auth()->user()->can('edit.own.post', $post)) {
             abort(403, 'Unauthorized action.');
         }
@@ -149,7 +148,6 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        // Check if user can edit this specific post using custom Gate
         if (!auth()->user()->can('edit.own.post', $post)) {
             abort(403, 'Unauthorized action.');
         }
@@ -158,7 +156,6 @@ class PostController extends Controller
         $imagePath = $post->image;
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($post->image) {
                 \Storage::disk('public')->delete($post->image);
             }
@@ -170,7 +167,6 @@ class PostController extends Controller
             'body' => $validatedData['body'],
             'image' => $imagePath,
             'category_id' => $validatedData['category_id'],
-            // user_id should not be updated here
             'user_id' => $post->user_id,
         ]);
 
@@ -182,12 +178,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        // Check if user can delete this specific post using custom Gate
         if (!auth()->user()->can('delete.own.post', $post)) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete image if exists
         if ($post->image) {
             \Storage::disk('public')->delete($post->image);
         }
@@ -199,7 +193,6 @@ class PostController extends Controller
 
     public function postsByCategory(Category $category)
     {
-        // Posts are automatically filtered by tenant
         $posts = Post::with('category')
             ->where('category_id', $category->id)
             ->get();

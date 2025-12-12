@@ -12,22 +12,9 @@ class SubscriberController extends Controller
      */
     public function index()
     {
-        // Check permission
-        if (!auth()->user()->can('view subscribers')) {
-            abort(403, 'Unauthorized action.');
-        }
-
         // Subscribers are automatically filtered by tenant
-        $subscribers = Subscriber::latest()->paginate(10);
+        $subscribers = Subscriber::latest()->get();
         return view('admin.subscribers', compact('subscribers'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -48,43 +35,11 @@ class SubscriberController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Subscriber $subscriber)
-    {
-        return response()->json($subscriber);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Subscriber $subscriber)
-    {
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Subscriber $subscriber)
-    {
-        $request->validate([
-            'email' => 'required|email|unique:subscribers,email,' . $subscriber->id,
-        ]);
-
-        $subscriber->update([
-            'email' => $request->input('email'),
-        ]);
-
-        return redirect()->route('subscribers.index')->with('success', 'Subscriber updated successfully.');
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Subscriber $subscriber)
     {
-        // Check permission
+        // Check permission using Spatie
         if (!auth()->user()->can('delete subscribers')) {
             abort(403, 'Unauthorized action.');
         }
