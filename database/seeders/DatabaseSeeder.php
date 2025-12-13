@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             'domain' => 'cnn.localhost',
         ]);
 
-        // Seed roles and permissions (shared across tenants)
+        // Seed roles and permissions
         $this->call(RolePermissionSeeder::class);
 
         // Create users for tenant 1

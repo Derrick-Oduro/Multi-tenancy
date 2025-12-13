@@ -42,7 +42,7 @@ class RolePermissionSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
-        // Create roles (shared across all tenants)
+        // Create roles
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo(Permission::all());
 
