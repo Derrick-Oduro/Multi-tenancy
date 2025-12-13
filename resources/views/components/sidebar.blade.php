@@ -6,5 +6,7 @@
             <a href="{{ route('tags.index') }}"class="{{ request()->is('tags') ? 'bg-gray-200' : 'bg-white' }} block px-4 py-2 rounded hover:bg-gray-300">Tags</a>
             <a href="{{ route('subscribers.index') }}"class="{{ request()->is('subscribers') ? 'bg-gray-200' : 'bg-white' }} block px-4 py-2 rounded hover:bg-gray-300">Subscribers</a>
             <a href="{{ route('admin.roles') }}"class="{{ request()->is('roles') ? 'bg-gray-200' : 'bg-white' }} block px-4 py-2 rounded hover:bg-gray-300">Asign Roles</a>
+            <a href="{{ route('users.index') }}"class="{{ request()->is('users') ? 'bg-gray-200' : 'bg-white' }} block px-4 py-2 rounded hover:bg-gray-300">Users</a>
+
         </nav>
 </aside>

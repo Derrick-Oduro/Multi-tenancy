@@ -65,6 +65,15 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin2->assignRole('admin');
 
+        // super-admin user (not tied to a tenant)
+        $superAdmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'derekoduro222@gmail.com',
+            'password' => bcrypt('Derek.419'),
+            'tenant_id' => null,
+        ]);
+        $superAdmin->assignRole('super-admin');
+
         // Create categories for tenant 1
         $cat1 = Category::create([
             'name' => 'Technology',

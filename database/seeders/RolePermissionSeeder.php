@@ -43,8 +43,30 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Create roles
+        $superAdmin = Role::create(['name' => 'super-admin'
+    ]);
+        $superAdmin->givePermissionTo(Permission::all());
+
+
         $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo(Permission::all());
+        $admin->givePermissionTo([
+            'view posts',
+            'create posts',
+            'edit posts',
+            'delete posts',
+            'publish posts',
+            'view categories',
+            'create categories',
+            'edit categories',
+            'delete categories',
+            'view tags',
+            'create tags',
+            'edit tags',
+            'delete tags',
+            'view subscribers',
+            'delete subscribers',
+            'manage roles',
+        ]);
 
         $editor = Role::create(['name' => 'editor']);
         $editor->givePermissionTo([

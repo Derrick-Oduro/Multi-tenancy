@@ -7,11 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\AdminController;
-
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+use App\Http\Controllers\UserController;
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -32,15 +28,9 @@ Route::resource('posts', controller: PostController::class)->names('posts');
 Route::resource('categories', CategoryController::class);
 Route::resource('tags', TagController::class);
 
-// Admin routes (add these within your admin middleware group)
-// Route::middleware(['auth', 'admin'])->group(function () {
-//     Route::get('/role', [AdminController::class, 'roles'])->name('admin.roles');
-//     Route::put('/role', [AdminController::class, 'updateRoles'])->name('admin.roles.update');
-// });
+// users
 
-// Route::get('/role', function () {
-//     return view('admin.roles');
-// })->name('admin.roles');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/role', [AdminController::class, 'roles'])->name('admin.roles');
@@ -50,9 +40,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/posts/{id}/admin', [PostController::class, 'show'])->name('posts.show.admin');
 });
 
+// users
+Route::middleware(['auth'])->group(function () {
+    Route::resource('users', UserController::class)->names('users');
+    Route::put('/users/{id}/updateRoles', [AdminController::class, 'updateUserRoles'])->name('admin.users.updateRoles');
+});
 
-
-
+// permissions
 
 
 
