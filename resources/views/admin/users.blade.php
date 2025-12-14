@@ -23,6 +23,7 @@
                     <th class="py-1 px-3 border-b text-sm">ID</th>
                     <th class="py-1 px-3 border-b text-sm">Name</th>
                     <th class="py-1 px-3 border-b text-sm">Email</th>
+                    <th class="py-1 px-3 border-b text-sm">Roles</th>
                     <th class="py-1 px-3 border-b text-sm text-right">Actions</th>
                 </tr>
             </thead>
@@ -33,6 +34,7 @@
                     <td class="py-1 px-3 border-b text-sm text-center">{{ $user->id }}</td>
                     <td class="py-1 px-3 border-b text-sm text-center">{{ $user->name }}</td>
                     <td class="py-1 px-3 border-b text-sm text-center">{{ $user->email ?? 'N/A' }}</td>
+                    <td class="py-1 px-3 border-b text-sm text-center">{{ $user->roles->pluck('name')->join(', ') }}</td>
                     <td class="py-1 px-3 border-b">
                         <div class="flex justify-end space-x-2">
 

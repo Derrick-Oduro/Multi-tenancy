@@ -24,7 +24,6 @@
                     <td class="py-1 px-3 border-b text-sm text-center">{{ $tenants->domain }}</td>
                     <td class="py-1 px-3 border-b">
                         <div class="flex justify-end space-x-2">
-                            {{-- actions can be added here --}}
                             @can('manage tenants')
                             <label for="editTenantModal-{{ $tenants->id }}"
                                class="px-2 py-1 text-sm text-green-500 rounded hover:underline">

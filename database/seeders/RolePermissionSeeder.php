@@ -72,14 +72,10 @@ class RolePermissionSeeder extends Seeder
         $editor = Role::create(['name' => 'editor']);
         $editor->givePermissionTo([
             'view posts',
-            'create posts',
             'edit posts',
-            'publish posts',
             'view categories',
-            'create categories',
             'edit categories',
             'view tags',
-            'create tags',
             'edit tags',
             'view subscribers',
         ]);
