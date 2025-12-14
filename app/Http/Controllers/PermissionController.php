@@ -20,9 +20,7 @@ class PermissionController extends Controller
         return view("admin.permissions", compact("permissions", "roles"));
     }
 
-    /**
-     * Attach a permission to a role.
-     */
+
     public function attachPermission(Request $request, Role $role)
     {
         $request->validate([
@@ -38,9 +36,7 @@ class PermissionController extends Controller
         return back()->with('success', 'Permission attached successfully');
     }
 
-    /**
-     * Detach a permission from a role.
-     */
+
     public function detachPermission(Role $role, Permission $permission)
     {
         $role->revokePermissionTo($permission);
