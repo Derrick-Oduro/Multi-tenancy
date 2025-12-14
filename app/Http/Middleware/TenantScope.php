@@ -12,18 +12,25 @@ class TenantScope
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
+            $user = auth()->user();
+
+            // Allow super-admin to bypass tenant requirement
+            if ($user->hasRole('super-admin')) {
+                return $next($request);
+            }
+
             // Check if user has tenant_id
-            if (!auth()->user()->tenant_id) {
+            if (!$user->tenant_id) {
                 Auth::logout();
                 return redirect()->route('login')
                     ->with('error', 'No tenant assigned to your account. Please contact administrator.');
             }
 
             // Set global tenant scope in config
-            config(['app.current_tenant_id' => auth()->user()->tenant_id]);
+            config(['app.current_tenant_id' => $user->tenant_id]);
 
             // Set in session for easy access
-            session(['tenant_id' => auth()->user()->tenant_id]);
+            session(['tenant_id' => $user->tenant_id]);
         }
 
         return $next($request);
