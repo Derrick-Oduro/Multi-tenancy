@@ -11,7 +11,6 @@
 
             <h3 class="text-xl font-bold mb-6">Manage Permissions for "{{ $role->name }}" Role</h3>
 
-            {{-- Current Permissions --}}
             <div class="mb-6">
                 <h4 class="font-semibold text-lg mb-3">Current Permissions:</h4>
                 <div class="space-y-2 max-h-60 overflow-y-auto">
@@ -34,7 +33,7 @@
 
             <div class="border-t my-6"></div>
 
-            {{-- Add Permission --}}
+
             <div class="mb-6">
                 <h4 class="font-semibold text-lg mb-3">Add Permission:</h4>
                 <form action="{{ route('permissions.attach', $role->id) }}" method="POST">
