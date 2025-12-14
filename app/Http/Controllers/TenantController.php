@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
-class PermissionController extends Controller
+class TenantController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $permissions = Permission::all();
-        return view("admin.permissions", compact("permissions"));
+        $tenant = Tenant::all();
+        return view("admin.tenants", compact("tenant"));
     }
 
     /**
@@ -35,7 +35,7 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Permission $permission)
+    public function show(Tenant $tenant)
     {
         //
     }
@@ -43,7 +43,7 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit(Tenant $tenant)
     {
         //
     }
@@ -51,7 +51,7 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, Tenant $tenant)
     {
         //
     }
@@ -59,8 +59,12 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy(Tenant $tenant)
     {
-        //
+        if(!auth()->user()->can('manage tenants')) {
+            abort(403, 'Unauthorized action.');
+        }
+        $tenant->delete();
+        return redirect()->route('tenants.index')->with('success', 'Tenant deleted successfully.');
     }
 }

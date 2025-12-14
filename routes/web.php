@@ -8,6 +8,8 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\TenantController;
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -47,6 +49,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // permissions
+Route::middleware(['auth'])->group(function () {
+    Route::resource('permissions', PermissionController::class)->names('permissions');
+    Route::resource('tenants', TenantController::class)->names('tenants');
+});
 
 
 

@@ -35,6 +35,7 @@ class RolePermissionSeeder extends Seeder
             'edit users',
             'delete users',
             'manage roles',
+            'manage tenants',
             'manage permissions',
         ];
 
