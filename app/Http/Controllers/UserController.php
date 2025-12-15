@@ -12,7 +12,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        if (auth()->user()->hasRole("super-admin")) {
+            $users = User::all();
+        } else {
+            $users = User::where('tenant_id', auth()->user()->tenant_id)->get();
+        }
         return view('admin.users', compact('users'));
     }
 
@@ -21,7 +25,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        if(!auth()->user()->can('create users')) {
+            abort(403, 'Unauthorized action.');
+        }
+        $users = User::where('tenant_id', auth()->user()->tenant_id)->get();
+        return view('components.modal.createUserModal', compact('users'));
     }
 
     /**
@@ -29,7 +37,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if(!auth()->user()->can('create users')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'tenant_id' => auth()->user()->tenant_id,
+        ]);
+
+        return redirect()->route('users.index')
+            ->with('success', 'User created successfully!');
     }
 
     /**
@@ -45,10 +71,15 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        // if(!auth()->user()->can('edit users')) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-        // return view('admin.editUser', compact('user'));
+        if(!auth()->user()->can('edit users')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if($user->tenant_id !== auth()->user()->tenant_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('components.modal.editUserModal', compact('user'));
     }
 
     /**
@@ -60,14 +91,20 @@ class UserController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        if($user->tenant_id !== auth()->user()->tenant_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'password'=>  bcrypt($request->password),
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'password'=> bcrypt($request->password),
         ]);
 
         return redirect()->route('users.index')
@@ -82,6 +119,11 @@ class UserController extends Controller
         if(!auth()->user()->can('delete users')) {
             abort(403, 'Unauthorized action.');
         }
+
+        if($user->tenant_id !== auth()->user()->tenant_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user->delete();
         return redirect()->route('users.index')
             ->with('success', 'User deleted successfully!');

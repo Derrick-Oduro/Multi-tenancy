@@ -50,7 +50,6 @@ class CategoryController extends Controller
             'slug' => 'required|string|max:255',
         ]);
 
-        // tenant_id is automatically set via model boot method
         Category::create([
             'name' => $request->input('name'),
             'slug' => $request->input('slug'),
@@ -65,7 +64,6 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category = Category::findOrFail($category->id);
-        // Posts are automatically filtered by tenant
         $posts = Post::orderBy('created_at', 'desc')->get();
         $secondLatest = $posts->skip(1)->first();
 

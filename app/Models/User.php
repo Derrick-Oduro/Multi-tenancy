@@ -54,18 +54,13 @@ class User extends Authenticatable
         return $this->belongsTo(Tenant::class);
     }
 
-    /**
-     * Override the team_id for Spatie permissions
-     * This maps our tenant_id to Spatie's team_id
-     */
+
     public function getTeamIdAttribute()
     {
         return $this->tenant_id;
     }
 
-    /**
-     * Set the team when assigning roles
-     */
+
     public function setTeamId($teamId)
     {
         $this->tenant_id = $teamId;

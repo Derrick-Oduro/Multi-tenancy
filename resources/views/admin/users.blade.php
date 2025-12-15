@@ -4,16 +4,16 @@
 <div class="flex">
 
     <x-sidebar></x-sidebar>
-    {{-- @role('super-admin') --}}
+    @can('view users')
     <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Users</h1>
-        @can('create tags')
+        @can('create users')
         <div class="mb-4">
-            <label for="createTagModal"
-               class="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-700 float-right">
+            <label for="createUserModal"
+               class="px-3 py-1 bg-sky-600 text-white text-sm rounded hover:bg-gray-700 float-right">
                Add Users
             </label>
-            <x-modal.createTagModal></x-modal.createTagModal>
+            <x-modal.createUserModal></x-modal.createUserModal>
         </div>
         @endcan
 
@@ -38,15 +38,15 @@
                     <td class="py-1 px-3 border-b">
                         <div class="flex justify-end space-x-2">
 
-                            {{-- @can('edit users') --}}
+                            @can('edit users')
                             <label for="editUserModal-{{ $user->id }}"
                                class="px-2 py-1 text-sm text-green-500 rounded hover:underline">
                                Edit
                             </label>
-                            {{-- <x-modal.editTagModal :user="$user"></x-modal.editTagModal> --}}
-                            {{-- @endcan --}}
+                            <x-modal.editUserModal :user="$user"></x-modal.editUserModal>
+                            @endcan
 
-                            {{-- @can('delete users') --}}
+                            @can('delete users')
                             <form action="{{ route('users.destroy', $user->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -54,7 +54,7 @@
                                     Delete
                                 </button>
                             </form>
-                            {{-- @endcan --}}
+                            @endcan
                         </div>
                     </td>
                 </tr>
@@ -62,11 +62,12 @@
             </tbody>
         </table>
     </main>
-    {{-- @else
+    @else
     <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Access Denied</h1>
         <p>You do not have permission to access this page.</p>
     </main>
-    --}}
+    @endcan
+
 </div>
 @endsection

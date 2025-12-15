@@ -21,7 +21,11 @@ class TenantController extends Controller
      */
     public function create()
     {
-        //
+        if (!auth()->user()->can('manage tenants')) {
+            abort(403, 'Unauthorized action.');
+        }
+        $tenants = Tenant::all();
+        return view('components.modal.createTenantModal',compact('tenants'));
     }
 
     /**
@@ -29,7 +33,20 @@ class TenantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!auth()->user()->can('manage tenants')) {
+            abort(403, 'Unauthorized action.');
+        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'domain' => 'required|string|max:255|unique:tenants,domain',
+        ]);
+        Tenant::create([
+            'name' => $request->input('name'),
+            'slug'=> $request->input('slug'),
+            'domain' => $request->input('domain'),
+        ]);
+        return redirect()->route('tenants.index')->with('success','Tenant created successfully.');
     }
 
     /**
@@ -45,7 +62,10 @@ class TenantController extends Controller
      */
     public function edit(Tenant $tenant)
     {
-        //
+        if (!auth()->user()->can('manage tenants')) {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('components.modal.editTenantModal', compact('tenant'));
     }
 
     /**
@@ -53,7 +73,18 @@ class TenantController extends Controller
      */
     public function update(Request $request, Tenant $tenant)
     {
-        //
+        if (!auth()->user()->can('manage tenants')) {
+            abort(403, 'Unauthorized action.');
+        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'domain' => 'required|string|max:255|unique:tenants,domain,' . $tenant->id,
+        ]);
+        $tenant->update([
+            'name' => $request->input('name'),
+            'domain' => $request->input('domain'),
+        ]);
+        return redirect()->route('tenants.index')->with('success','Tenant updated successfully.');
     }
 
     /**

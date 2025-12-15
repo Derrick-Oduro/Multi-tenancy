@@ -43,7 +43,7 @@ class PostController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Posts are automatically filtered by tenant
+
         $posts = Post::with(['category', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();

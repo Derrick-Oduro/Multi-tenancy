@@ -21,30 +21,30 @@ class PermissionController extends Controller
     }
 
 
-    public function attachPermission(Request $request, Role $role)
-    {
-        $request->validate([
-            'permission_id' => 'required|exists:permissions,id'
-        ]);
+    // public function attachPermission(Request $request, Role $role)
+    // {
+    //     $request->validate([
+    //         'permission_id' => 'required|exists:permissions,id'
+    //     ]);
 
-        $permission = Permission::findOrFail($request->permission_id);
+    //     $permission = Permission::findOrFail($request->permission_id);
 
-        $role->givePermissionTo($permission);
+    //     $role->givePermissionTo($permission);
 
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+    //     app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        return back()->with('success', 'Permission attached successfully');
-    }
+    //     return back()->with('success', 'Permission attached successfully');
+    // }
 
 
-    public function detachPermission(Role $role, Permission $permission)
-    {
-        $role->revokePermissionTo($permission);
+    // public function detachPermission(Role $role, Permission $permission)
+    // {
+    //     $role->revokePermissionTo($permission);
 
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+    //     app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        return back()->with('success', 'Permission removed successfully');
-    }
+    //     return back()->with('success', 'Permission removed successfully');
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -81,9 +81,19 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $permission)
+    public function update(Request $request, $roleId)
     {
-        //
+        $role = Role::findOrFail($roleId);
+
+        $permissionIds = $request->input('permissions', []);
+
+        $permissions = Permission::whereIn('id', $permissionIds)->get();
+
+        $role->syncPermissions($permissions);
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        return redirect()->back()->with('success', 'Permissions updated successfully!');
     }
 
     /**

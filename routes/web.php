@@ -51,8 +51,7 @@ Route::middleware(['auth'])->group(function () {
 // permissions
 Route::middleware(['auth'])->group(function () {
     Route::resource('permissions', PermissionController::class)->names('permissions');
-    Route::post('/roles/{role}/permissions', [PermissionController::class, 'attachPermission'])->name('permissions.attach');
-    Route::delete('/roles/{role}/permissions/{permission}', [PermissionController::class, 'detachPermission'])->name('permissions.detach');
+    Route::put('/roles/{role}/permissions', [PermissionController::class, 'update'])->name('permissions.update');
 
     Route::resource('tenants', TenantController::class)->names('tenants');
 });
