@@ -6,8 +6,7 @@
             peer-checked:opacity-100 peer-checked:pointer-events-auto">
     <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
         <h2 class="text-xl font-bold mb-4">Edit Tag</h2>
-        <form action="{{ route('tags.update', $tag->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">@csrf
-            @method('PUT')
+        <form hx-put="{{ route('tags.update', $tag->id) }}" hx-target="#tags-table" hx-swap="innerHTML" class="space-y-4">@csrf
 
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>

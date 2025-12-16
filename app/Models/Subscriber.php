@@ -16,7 +16,6 @@ class Subscriber extends Model
         return $this->belongsTo(Tenant::class);
     }
 
-    // Global scope for tenant isolation
     protected static function booted()
     {
         static::addGlobalScope('tenant', function ($query) {

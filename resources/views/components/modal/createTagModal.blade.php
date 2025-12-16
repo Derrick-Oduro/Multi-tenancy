@@ -6,7 +6,7 @@
             peer-checked:opacity-100 peer-checked:pointer-events-auto">
     <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
         <h2 class="text-xl font-bold mb-4">Create Tag</h2>
-        <form action="{{ route('tags.store') }}" method="POST" class="space-y-4">
+        <form hx-post="{{ route('tags.store') }}" hx-target="#tags-table" hx-swap="innerHTML" hx-on="htmx:afterRequest: document.getElementById('createTagModal').checked = false" class="space-y-4">
             @csrf
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
@@ -35,11 +35,11 @@
         </form>
     </div>
 </div>
-@if ($errors->any())
+{{-- @if ($errors->any())
 <script>
     document.getElementById('createTagModal').checked = true;
 </script>
-@endif
+@endif --}}
 @if(session('success'))
 <div id="successToast"
      class="fixed top-4 center bg-green-600 text-white px-4 py-2 rounded shadow-lg">

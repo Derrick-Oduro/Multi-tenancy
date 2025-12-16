@@ -51,7 +51,7 @@ class TagController extends Controller
 
 
     $tags = Tags::withCount('posts')->latest()->paginate(10);
-    return view('admin.tags', compact('tags'))
+    return view('partials.tags-table', compact('tags'))
     ->with('success', 'Tag created successfully.');
 }
 
@@ -89,7 +89,7 @@ class TagController extends Controller
 
 
     $tags = Tags::withCount('posts')->latest()->paginate(10);
-    return view('admin.tags', compact('tags'))
+    return view('partials.tags-table', compact('tags'))
     ->with('success', 'Tag updated successfully.');
 }
 

@@ -10,6 +10,25 @@ class Post extends Model
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
 
+    // Global scope to automatically filter by current tenant
+    protected static function booted()
+        {
+            static::addGlobalScope('tenant', function ($query) {
+                if (auth()->check() && auth()->user()->tenant_id) {
+                    $query->where('tenant_id', auth()->user()->tenant_id);
+                }
+            });
+
+            static::creating(function ($post) {
+                if (auth()->check() && auth()->user()->tenant_id) {
+                    $post->tenant_id = auth()->user()->tenant_id;
+                }
+                if (auth()->check() && !$post->user_id) {
+                    $post->user_id = auth()->id();
+                }
+            });
+        }
+
     protected $fillable = [
         'title',
         'body',
@@ -45,22 +64,6 @@ class Post extends Model
         return $query->where('tenant_id', $tenantId);
     }
 
-    // Global scope to automatically filter by current tenant
-    protected static function booted()
-    {
-        static::addGlobalScope('tenant', function ($query) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $query->where('tenant_id', auth()->user()->tenant_id);
-            }
-        });
 
-        static::creating(function ($post) {
-            if (auth()->check() && auth()->user()->tenant_id) {
-                $post->tenant_id = auth()->user()->tenant_id;
-            }
-            if (auth()->check() && !$post->user_id) {
-                $post->user_id = auth()->id();
-            }
-        });
-    }
+
 }

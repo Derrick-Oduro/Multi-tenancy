@@ -6,12 +6,12 @@
     {{-- Sidebar --}}
     <x-sidebar></x-sidebar>
     @can('view posts')
-    <main class="w-4/5 p-6 bg-gray-100 min-h-screen w-full">
+    <main class="w-4/5 p-6 bg-slate-50 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Posts</h1>
         <div class="mb-4">
             @can('create posts')
             <label for="createPostModal"
-               class="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-700 float-right">
+               class="px-3 py-1 bg-sky-600 text-white text-sm rounded hover:bg-sky-700 float-right">
                +Add Post
             </label>
             <x-modal.createPostModal :categories="\App\Models\Category::all()"></x-modal.createPostModal>
@@ -20,7 +20,7 @@
 
         <table class="min-w-full bg-white rounded-lg">
             <thead>
-                <tr>
+                <tr class="bg-sky-50">
                     <th class="py-1 px-3 border-b text-sm">ID</th>
                     <th class="py-1 px-3 border-b text-sm">Title</th>
                     <th class="py-1 px-3 border-b text-sm">Category</th>
