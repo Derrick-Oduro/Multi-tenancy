@@ -8,6 +8,8 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
 
 
         <!-- Fonts -->
@@ -35,5 +37,10 @@
                  @yield('content')
             </main>
         </div>
+        <script>
+            document.body.addEventListener('htmx:configRequest', (event) => {
+                event.detail.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            });
+        </script>
     </body>
 </html>

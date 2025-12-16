@@ -13,7 +13,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        // Tags are automatically filtered by tenant
+
         $tags = Tags::withCount('posts')->latest()->paginate(10);
         return view('admin.tags', compact('tags'));
     }
@@ -35,25 +35,26 @@ class TagController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Check permission using Spatie
-        if (!auth()->user()->can('create tags')) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        // tenant_id is automatically set via model boot
-        Tags::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ]);
-
-        return redirect()->route('tags.index')
-            ->with('success', 'Tag created successfully!');
+{
+    if (!auth()->user()->can('create tags')) {
+        abort(403);
     }
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    Tags::create([
+        'name' => $request->name,
+        'slug' => Str::slug($request->name),
+    ]);
+
+
+    $tags = Tags::withCount('posts')->latest()->paginate(10);
+    return view('admin.tags', compact('tags'))
+    ->with('success', 'Tag created successfully.');
+}
+
 
     /**
      * Show the form for editing the specified resource.
@@ -72,38 +73,46 @@ class TagController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Tags $tag)
-    {
-        // Check permission using Spatie
-        if (!auth()->user()->can('edit tags')) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        $tag->update([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-        ]);
-
-        return redirect()->route('tags.index')
-            ->with('success', 'Tag updated successfully!');
+{
+    if (!auth()->user()->can('edit tags')) {
+        abort(403);
     }
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $tag->update([
+        'name' => $request->name,
+        'slug' => Str::slug($request->name),
+    ]);
+
+
+    $tags = Tags::withCount('posts')->latest()->paginate(10);
+    return view('admin.tags', compact('tags'))
+    ->with('success', 'Tag updated successfully.');
+}
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Tags $tag)
-    {
-        // Check permission using Spatie
-        if (!auth()->user()->can('delete tags')) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $tag->delete();
-
-        return redirect()->route('tags.index')
-            ->with('success', 'Tag deleted successfully!');
+{
+    if (!auth()->user()->can('delete tags')) {
+        abort(403);
     }
+
+    $tag->delete();
+
+    // Return empty content to swap out the deleted row
+    return response('', 200);
+}
+
+
+    public function refresh()
+{
+    $tags = Tags::withCount('posts')->latest()->paginate(10);
+    return view('partials.tags-table', compact('tags'));
+}
+
 }

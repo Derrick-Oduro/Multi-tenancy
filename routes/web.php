@@ -56,7 +56,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('tenants', TenantController::class)->names('tenants');
 });
 
-
+// HTMX Routes
+Route::get('/tags/refresh', [TagController::class, 'refresh'])->name('tags.refresh');
 
 
 

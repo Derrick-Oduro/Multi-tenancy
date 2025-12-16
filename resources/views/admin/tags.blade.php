@@ -18,47 +18,35 @@
         </div>
         @endcan
 
-        <table class="min-w-full bg-white rounded-lg">
-            <thead class="bg-slate-100">
+        <button
+            hx-get="{{ route('tags.refresh') }}"
+            hx-target="#tags-table"
+            hx-swap="innerHTML"
+            class="px-3 py-1 bg-slate-600 text-white text-sm rounded hover:bg-slate-700">
+            Refresh
+        </button>
+
+
+        <table class="w-full">
+            <thead>
                 <tr>
-                    <th class="py-1 px-3 border-b text-slate-600 text-sm">ID</th>
-                    <th class="py-1 px-3 border-b text-slate-600 text-sm">Name</th>
-                    <th class="py-1 px-3 border-b text-slate-600 text-sm">Slug</th>
-                    <th class="py-1 px-3 border-b text-slate-600 text-sm text-right">Actions</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @foreach($tags as $tag)
-                <tr class="border-t">
-                    <td class="py-1 px-3 border-b text-sm text-slate-700 text-center">{{ $tag->id }}</td>
-                    <td class="py-1 px-3 border-b text-sm text-slate-700 text-center">{{ $tag->name }}</td>
-                    <td class="py-1 px-3 border-b text-sm text-slate-700 text-center">{{ $tag->slug ?? 'N/A' }}</td>
-                    <td class="py-1 px-3 border-b">
-                        <div class="flex justify-end space-x-2">
-
-                            @can('edit tags')
-                            <label for="editTagModal-{{ $tag->id }}"
-                               class="px-2 py-1 text-sm text-green-500 rounded hover:underline">
-                               Edit
-                            </label>
-                            <x-modal.editTagModal :tag="$tag"></x-modal.editTagModal>
-                            @endcan
-
-                            @can('delete tags')
-                            <form action="{{ route('tags.destroy', $tag->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Are you sure you want to delete this tag')" class="px-2 py-1 text-sm text-orange-500 rounded hover:underline">
-                                    Delete
-                                </button>
-                            </form>
-                            @endcan
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
+            <tbody
+                id="tags-table"
+                hx-get="{{ route('tags.refresh') }}"
+                hx-trigger="tags-updated from:body"
+                hx-swap="innerHTML"
+                                    >
+                @include('partials.tags-table', ['tags' => $tags])
             </tbody>
+
+
+
         </table>
     </main>
     @else

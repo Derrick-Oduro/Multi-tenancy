@@ -9,7 +9,7 @@
 
     {{-- Main Content Area --}}
     @can('manage roles')
-    <main class="w-3/4 p-6 bg-gray-100 min-h-screen w-full">
+    <main class="w-3/4 p-6 bg-slate-50 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-4">Roles Management</h1>
 
         <form action="{{ route('admin.roles.update') }}" method="POST">
@@ -56,7 +56,7 @@
             </table>
 
             <div class="mt-4">
-                <button type="submit" class="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-700">
+                <button type="submit" class="px-3 py-1 bg-sky-600 text-white text-sm rounded hover:bg-sky-700">
                     Update Roles
                 </button>
             </div>
